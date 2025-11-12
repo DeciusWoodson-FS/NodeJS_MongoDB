@@ -15,7 +15,11 @@ exports.createStore = async (req, res) => {
 // GET /api/stores (Get all stores)
 exports.getAllStores = async (req, res) => {
   try {
-    const stores = await Store.find();
+    const stores = await Store.find()
+      .populate({
+        path: 'products',
+        select: 'name price category storeId createdAt updatedAt'
+      });
     res.status(200).json(stores); // 200 OK
   } catch (err) {
     res.status(500).json({ message: 'Error fetching stores', error: err.message });
@@ -25,7 +29,11 @@ exports.getAllStores = async (req, res) => {
 // GET /api/stores/:id (Get a single store by ID)
 exports.getStoreById = async (req, res) => {
   try {
-    const store = await Store.findById(req.params.id);
+    const store = await Store.findById(req.params.id)
+      .populate({
+        path: 'products',
+        select: 'name price category storeId createdAt updatedAt'
+      });
     if (!store) {
       return res.status(404).json({ message: 'Store not found' }); // 404 Not Found
     }

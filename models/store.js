@@ -19,6 +19,17 @@ const storeSchema = new Schema({
         type: Boolean,
         default: true
     }
-}, { timestamps: true});
+}, { 
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+});
+
+// Virtual populate for products
+storeSchema.virtual('products', {
+    ref: 'Product',
+    localField: '_id',
+    foreignField: 'storeId'
+});
 
 module.exports = mongoose.model("Store", storeSchema);
