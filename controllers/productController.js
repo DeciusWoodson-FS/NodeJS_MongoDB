@@ -22,8 +22,26 @@ exports.createProduct = async (req, res) => {
 exports.getAllProducts = async (req, res) => {
   try {
     let filter = {};
+    
+    // Filter by storeId
     if (req.query.storeId) {
       filter.storeId = req.query.storeId;
+    }
+    
+    // Filter by category (Grocery, Electronics, etc..)
+    if (req.query.category) {
+      filter.category = req.query.category;
+    }
+    
+    // Filter by price range 
+    if (req.query.minPrice || req.query.maxPrice) {
+      filter.price = {};
+      if (req.query.minPrice) {
+        filter.price.$gte = parseFloat(req.query.minPrice);
+      }
+      if (req.query.maxPrice) {
+        filter.price.$lte = parseFloat(req.query.maxPrice);
+      }
     }
     
     const products = await Product.find(filter).populate('storeId');
