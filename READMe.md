@@ -2,6 +2,10 @@
 
 This project focuses on creating a RESTful API built with NodeJS, Express, and Mongoose to manage stores and their associated products. This project has full CRUS(Create, Read, Update, Delete) operations and data modeling for a "has-a" relationship, where a store can have many products. 
 
+## Update 11.15
+
+Added functionality to filter the products within the store by their associated categories(Grocery, Electronics, Apparel, Other) and further filtering by price range. I've also added pagination to have products appear on pages with limits to how many products can appear on said page. Currently the default limit is set to 10. 
+
 ## Tech Stack 
 
 **Server**: [NodeJS](https://nodejs.org/en)
