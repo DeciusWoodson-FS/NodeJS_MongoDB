@@ -44,9 +44,22 @@ exports.getAllProducts = async (req, res) => {
       }
     }
     
-    const products = await Product.find(filter).populate('storeId');
+     //Pagination parameters
+    const query = Product.find(filter);
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    query.skip(skip).limit(limit).populate('storeId');
+
+    const products = await query;
     
-    res.status(200).json(products);
+    res.status(200).json({
+      data: products,
+      success: true, 
+      message: `${req.method} - request to Product endpoint`
+    });
   } catch (err) {
     res.status(500).json({ message: 'Error fetching products', error: err.message });
   }

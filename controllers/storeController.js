@@ -15,12 +15,24 @@ exports.createStore = async (req, res) => {
 // GET /api/stores (Get all stores)
 exports.getAllStores = async (req, res) => {
   try {
-    const stores = await Store.find()
-      .populate({
-        path: 'products',
-        select: 'name price category storeId createdAt updatedAt'
-      });
-    res.status(200).json(stores); // 200 OK
+    const query = Store.find({});
+    
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    
+    query.skip(skip).limit(limit).populate({
+      path: 'products',
+      select: 'name price category storeId createdAt updatedAt'
+    });
+    
+    const stores = await query;
+    
+    res.status(200).json({
+      data: stores,
+      success: true,
+      message: `${req.method} - request to Store endpoint`
+    }); // 200 OK
   } catch (err) {
     res.status(500).json({ message: 'Error fetching stores', error: err.message });
   }
