@@ -1,16 +1,19 @@
 //Import packages
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 require("dotenv").config();
 
 //Import routes
-const storeRoutes = require("./routes/storeRoutes");
-const productRoutes = require("./routes/productRoutes");
+const storeRoutes = require("./server/routes/storeRoutes");
+const productRoutes = require("./server/routes/productRoutes");
 
 //Initialization
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+//Enable CORS for all routes
+app.use(cors());
 app.use(express.json());
 
 //Database connection 
