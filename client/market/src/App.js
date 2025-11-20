@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import './App.css';
+import Header from './components/Header';
+import ErrorMessage from './components/ErrorMessage';
+import SearchFilters from './components/SearchFilters';
+import StoresList from './components/StoresList';
+import ProductsList from './components/ProductsList';
 
 const API_BASE_URL = 'http://localhost:3000/api';
 
@@ -59,7 +63,7 @@ function App() {
     }
   };
 
-  // Filter products by search term (client-side)
+  // Filter products by search 
   useEffect(() => {
     if (!searchTerm.trim()) {
       setFilteredProducts(products);
@@ -77,7 +81,7 @@ function App() {
     fetchProducts();
   }, []);
 
-  // Refetch products when filters change
+  // Fetch products when filters change
   useEffect(() => {
     fetchProducts();
   }, [selectedStore, selectedCategory, minPrice, maxPrice]);
@@ -101,185 +105,47 @@ function App() {
 
   return (
     <div className="App">
-      <header className="app-header">
-        <h1>Store Product Search</h1>
-        <p>Search and browse products from your favorite stores</p>
-      </header>
+      <Header />
 
       <div className="container">
-        {error && (
-          <div className="error-message">
-            {error}
-            <button onClick={() => setError(null)}>×</button>
-          </div>
-        )}
+        <ErrorMessage error={error} onClose={() => setError(null)} />
 
-        {/* Search and Filter Section */}
-        <section className="section">
-          <h2>Search & Filter Products</h2>
-          
-          {/* Product Name Search */}
-          <div className="form-group search-group">
-            <label>Search by Product Name:</label>
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Enter product name to search..."
-              className="search-input"
-            />
-          </div>
+        <SearchFilters
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          stores={stores}
+          selectedStore={selectedStore}
+          onStoreChange={setSelectedStore}
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+          minPrice={minPrice}
+          onMinPriceChange={setMinPrice}
+          maxPrice={maxPrice}
+          onMaxPriceChange={setMaxPrice}
+          onClearFilters={clearFilters}
+        />
 
-          {/* Filters */}
-          <div className="filters">
-            <div className="form-group">
-              <label>Store:</label>
-              <select
-                value={selectedStore}
-                onChange={(e) => setSelectedStore(e.target.value)}
-              >
-                <option value="">All Stores</option>
-                {stores.map(store => (
-                  <option key={store._id} value={store._id}>
-                    {store.name} - {store.location}
-                  </option>
-                ))}
-              </select>
-            </div>
-            
-            <div className="form-group">
-              <label>Category:</label>
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-              >
-                <option value="">All Categories</option>
-                <option value="Electronics">Electronics</option>
-                <option value="Apparel">Apparel</option>
-                <option value="Grocery">Grocery</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            
-            <div className="form-group">
-              <label>Min Price:</label>
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                value={minPrice}
-                onChange={(e) => setMinPrice(e.target.value)}
-                placeholder="Min price"
-              />
-            </div>
-            
-            <div className="form-group">
-              <label>Max Price:</label>
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(e.target.value)}
-                placeholder="Max price"
-              />
-            </div>
-            
-            <button
-              onClick={clearFilters}
-              className="btn btn-secondary"
-            >
-              Clear All
-            </button>
-          </div>
-        </section>
+        <StoresList
+          stores={stores}
+          loading={loading}
+          selectedStore={selectedStore}
+          onStoreSelect={setSelectedStore}
+          onRefresh={fetchStores}
+        />
 
-        {/* Stores Overview */}
-        <section className="section">
-          <div className="section-header">
-            <h2>Available Stores ({stores.length})</h2>
-            <button onClick={fetchStores} className="btn btn-secondary" disabled={loading}>
-              Refresh
-            </button>
-          </div>
-          {loading && stores.length === 0 ? (
-            <div className="loading">Loading stores...</div>
-          ) : stores.length === 0 ? (
-            <div className="empty-state">No stores found in the database.</div>
-          ) : (
-            <div className="stores-grid">
-              {stores.map(store => (
-                <div 
-                  key={store._id} 
-                  className={`store-card ${selectedStore === store._id ? 'selected' : ''}`}
-                  onClick={() => setSelectedStore(selectedStore === store._id ? '' : store._id)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <h3>{store.name}</h3>
-                  <p className="store-location">{store.location}</p>
-                  <p className="store-status">
-                    {store.isOpen ? (
-                      <span className="status-open">Open</span>
-                    ) : (
-                      <span className="status-closed">Closed</span>
-                    )}
-                  </p>
-                  {store.products && store.products.length > 0 && (
-                    <p className="product-count">{store.products.length} product(s)</p>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-
-        {/* Products List */}
-        <section className="section">
-          <div className="section-header">
-            <h2>
-              Products 
-              {filteredProducts.length !== products.length && (
-                <span className="results-count">
-                  {' '}(Showing {filteredProducts.length} of {products.length})
-                </span>
-              )}
-              {filteredProducts.length === products.length && products.length > 0 && (
-                <span className="results-count"> ({products.length})</span>
-              )}
-            </h2>
-            <button onClick={fetchProducts} className="btn btn-secondary" disabled={loading}>
-              Refresh
-            </button>
-          </div>
-          {loading && products.length === 0 ? (
-            <div className="loading">Loading products...</div>
-          ) : filteredProducts.length === 0 ? (
-            <div className="empty-state">
-              {searchTerm || selectedStore || selectedCategory || minPrice || maxPrice
-                ? 'No products match your search criteria. Try adjusting your filters.'
-                : 'No products found in the database.'}
-            </div>
-          ) : (
-            <div className="products-grid">
-              {filteredProducts.map(product => (
-                <div key={product._id} className="product-card">
-                  <h3>{product.name}</h3>
-                  <p className="product-price">${parseFloat(product.price).toFixed(2)}</p>
-                  <p className="product-category">
-                    <span className={`category-badge category-${product.category.toLowerCase()}`}>
-                      {product.category}
-                    </span>
-                  </p>
-                  {product.storeId && (
-                    <p className="product-store">
-                      {getStoreName(product.storeId)}
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
+        <ProductsList
+          products={products}
+          filteredProducts={filteredProducts}
+          loading={loading}
+          searchTerm={searchTerm}
+          selectedStore={selectedStore}
+          selectedCategory={selectedCategory}
+          minPrice={minPrice}
+          maxPrice={maxPrice}
+          stores={stores}
+          onRefresh={fetchProducts}
+          getStoreName={getStoreName}
+        />
       </div>
     </div>
   );

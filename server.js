@@ -1,6 +1,7 @@
 //Import packages
 const express = require("express");
 const mongoose = require("mongoose");
+const morgan =require("morgan");
 const cors = require("cors");
 require("dotenv").config();
 
@@ -11,6 +12,8 @@ const productRoutes = require("./server/routes/productRoutes");
 //Initialization
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+app.use(morgan("dev"));
 
 //Enable CORS for all routes
 app.use(cors());
