@@ -2,6 +2,10 @@
 
 This project focuses on creating a RESTful API built with NodeJS, Express, and Mongoose to manage stores and their associated products. This project has full CRUS(Create, Read, Update, Delete) operations and data modeling for a "has-a" relationship, where a store can have many products. 
 
+## Update 11.22
+
+Added CSS via Styled Components and added products to other stores using Postman for a fuller store application. 
+
 ## Update 11.20
 
 Progessed the project to a Fullstack MERN application that allows users to search products and stores already made within the database. Users will also be able to filter products by category and price range. Styling will be done with Styled Components/CSS in JS. 
@@ -27,4 +31,13 @@ Added functionality to filter the products within the store by their associated 
 **HTTP Mechanism**: [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS)
 
 **Styling**: [Styled-Components](https://styled-components.com/)
+
+## Instructions on how to use
+
+1. Clone Repository and open using Code Editor of choice(I prefer using VSCode)
+2. Open two terminal windows.
+3. In the first terminal window, run "Node server.js" in order to first start the server with MongoDB.
+4. in the second terminal window, navigate to the market folder by typing in "cd client/market"
+5. once in the market folder run "npm start" to open the application automatically in your preffered browser.
+6. Have fun! Any and all feedback is appreciated! 
 
